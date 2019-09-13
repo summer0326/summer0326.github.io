@@ -1,0 +1,163 @@
+<html>
+    <head>
+    <meta charset='utf-8' />
+    <title>Event map</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css' rel='stylesheet'/>
+    <script src='https://cdn.bootcss.com/echarts/3.7.2/echarts.simple.js'></script>
+    <script type="text/javascript" src="./lib/echarts-wordcloud.js"></script>
+    <script src='./lib/echarts-wordcloud.min.js'></script>   
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/wordcloud.js"></script>
+<style>       
+    body {
+          margin: 0;
+          padding: 0;
+        }
+        /* Create a position for the backgroud map*/
+
+        #map {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 100%;
+        }
+  
+    #title{
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 5px;
+        top: 20px;
+        left:20px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        font: 20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        padding: 5px;
+        position:absolute;
+        height: 100px;
+        width:550px;    
+    }
+    
+        
+    #main {
+            width: 80%;
+            height: 100%;
+            margin: 0;
+            object-position: center;
+    }   
+        /**
+        * Create a position for the the word cloud map
+        * on the page */
+    
+    #legend {
+        top: 55%;
+        font: 10px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        padding: 0px;
+        position:relative;
+        right:10px;
+        left: 0px;
+        height: inherit;
+        width:80%;
+        margin: 0 auto;
+    }
+
+    
+    .map-overlay{
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        position: absolute;
+        width: 25%;
+        height: 100%;
+        bottom: 0px;
+        right: 0;
+        background: rgba(255, 255, 255, 1);
+        margin-right: 0px;
+        font-family: Arial, sans-serif;
+        overflow: auto;
+        border-radius: 3px;
+        }
+        
+    .intro {
+        background-color: rgba(255, 255, 255, 0);
+        font: 12px/24px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        position:absolute;
+        padding: 10px;
+        margin-bottom: 10px;
+        top: 10px;
+        height: inherit;
+        
+        margin-top: 20px;
+        width: 350px;
+        left: 30px;
+        right: 10px
+        }
+    .intro h1 {
+        margin: 0px 0px 10px;
+        font: 24px
+        }
+
+        </style>
+    </head>
+    <body>
+         
+         <div id='map'></div>
+        <div id='title'><p>Most Popular Words of London Events in first week of May<p style="font-size:60%">Data Generated from<a href='https://www.eventbrite.co.uk/platform/docs/by-date'>Eventbrite API</a> weekly new added events 1st-7th May 2019
+            </p></div>
+        
+<!--this call the script of word cloud function by ID "main".
+This is a separate file which I build through Echart-->
+    <div id='main'>
+    <script src="word_cloud.js"></script>
+        </div>
+    
+        <div class='map-overlay'> 
+     <div class='intro'>
+        <h1>Social and Cultural Experience by Events</h1>
+         <p style="font-size:1.2em">Societal and cultural events create an invisible city structure that brings individuals a sense of place. In these visualisations, we explore the liveability of London through a week’s worth of social and cultural experiences. To investigate these experiences, we look at weekly public events throughout the city.</p>
+             
+         <p style="font-size:1.2em">
+         Daily events create a medium which connects people to their city. It brings a chance for interactions between not only people and people but also people and place. There are broad categories of events, and individuals with the same hobbies or skills can get together to share knowledge and have social interactions.
+         </p>
+            </div>
+            <div id ='legend' style= "height:400px"></div>
+            </div>
+        
+<script>
+     mapboxgl.accessToken = 'pk.eyJ1IjoibWFkYW8yMzMzIiwiYSI6ImNqYzh5aXk0cjA0cDAyd281cm0wc3J0YzAifQ.9dICOu1KU_JZdW8tBxNChg'; 
+    
+// from mapbox load a simple map as †he background of wordcloud 
+var map = new mapboxgl.Map({
+    container: 'map', 
+    style: 'mapbox://styles/madao2333/cjvr58n1t064m1cmlhflpxzmw', 
+    center: [0.141476, 51.488563], 
+    zoom: 9.7 
+    });
+    
+    map.on('load', function() {
+ 
+    var chart = Highcharts.chart('legend', {
+
+    title: {
+        text: 'Chart of Top 15 Event Words'
+    },
+
+    subtitle: {
+        text: 'first week of May'
+    },
+    
+    // set the x label with top 15 words
+    xAxis: {
+        categories: ['London', 'Party', 'Bank', 'Day', 'Holiday', 'Live', 'Free', 'Present', 'Night', 'Health', 'Event','Launch','Art','Special','Talk']
+    },
+    
+    // set a series of y label with values of frequency
+    series: [{
+        type: 'bar',
+        colorByPoint: true,
+        data: [41, 18, 17, 16, 15, 14, 13, 13, 13, 11, 10, 10, 9, 9, 8],
+        showInLegend:false
+    }]
+
+});
+    })
+        </script>
+    </body>
+</html>
