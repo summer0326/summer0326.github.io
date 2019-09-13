@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <link rel="stylesheet" type="text/css" href="src/fullpage.css" />
+  <script src="vendors/easings.min.js"></script>
+  <script type="text/javascript" src="vendors/scrolloverflow.min.js"></script>
+  <script type="text/javascript" src="src/fullpage.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Maven+Pro" rel="stylesheet">
+  <style>
+      ul1{
+          list-style: none;
+          list-style-type: none;
+          margin-left: 60%;
+          padding: 0;
+          height:14px;
+          max-width:1000px
+      }
+      li1 a{
+          float: left;
+          width: 50px;
+          color: white;
+          font-family: 'cursive','Maven Pro';
+          font-size: 16px;
+          font-weight:bolder;
+          text-align: center;
+          text-shadow: black 0.1em 0.1em 0.2em;
+          margin-left:30px;
+      }
+      li1 a:hover{
+          float: left;
+          width: 50px;
+          color: rgb(131, 131, 128);
+          font-family: 'cursive','Maven Pro';
+          font-size: 16px;
+          font-weight:bolder;
+          text-align: center;
+          text-shadow: black 0.1em 0.1em 0.2em;
+          margin-left:30px;
+      }
+  </style>
+
+
+
+  <title>Experience Of London</title>
+</head>
+<body>
+  <ul1 style='position:fixed; z-index:999; top:0;'>
+      <li1>
+        <a href="#firstPage">Intro</a>
+        <a href="#secondPage">Events</a>
+    
+      </li1>
+
+
+  </ul1>
+  <div id="fullpage">
+  	<div class="section active" id="section0">
+      <iframe id="intro" src="intro/firstpage.html" height="100%" width="100%" frameBorder="0" scrolling="yes"></iframe>
+
+    </div>
+ 
+
+  	<div class="section" id="section1">
+      <div class="slide">
+        <iframe id="ev" src="event_data%25202/wordcloud.html" height="100%" width="100%" frameBorder="0" scrolling="no"></iframe>
+
+      </div>
+      <div class="slide">
+        <iframe id="ev" src="event_data%25202/event.html" height="100%" width="100%" frameBorder="0" scrolling="no"></iframe>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <script type="text/javascript">
+  	var myFullpage = new fullpage('#fullpage', {
+  		sectionsColor: ['#f2f2f2', 'rgb(175, 175, 175)', '#7BAABE', 'rgb(54, 99, 176)', '#ccddff'],
+      menu: '#menu',
+      lockAnchors: false,
+	    anchors:['firstPage', 'secondPage', 'thirdPage','fourthPage','fifthPage','sixthPage'],
+      navigation: true,
+      navigationPosition: 'right',
+      showActiveTooltip: true,
+      slidesNavigation: true,
+      slidesNavPosition: 'bottom',
+      easing: 'easeInOutCubic',
+      scrollBar: false,
+      keyboardScrolling: true,
+      animateAnchor: true,
+      recordHistory: true,
+  	});
+  </script>
+</body>
+</html>
