@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Travel to work in London-Public transport and cycle</title>   
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
+
+    <style>
+body { margin:0; padding:0;}
+#map { position:absolute; top:0; bottom:0; width:100%;}
+        
+    .map-overlay {
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        position: absolute;
+        width: 30%;
+        top: 0;
+        left: 0;
+        padding: 10px;
+        opacity: 0.8;
+    }
+
+    .map-overlay .map-overlay-inner {
+        background-color: #fff;
+        box-shadow:0 1px 2px rgba(0, 0, 0, 0.20);
+        border-radius: 10px;
+        padding: 6px;
+        margin-bottom: 10px;
+    }
+
+    .map-overlay table {
+        border: none;
+        width: 100%;
+    }
+
+    .map-overlay h1 {
+        line-height: 24px;
+        display: block;
+        margin: 0 0 10px;
+    }
+
+    .map-overlay label {
+        font: 16px/18px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        vertical-align: bottom;
+        margin: 0;
+        padding: 0;
+    }
+
+
+    .map-overlay input {
+        display: inline;
+        vertical-align: middle;
+        margin: 5px;
+        padding: 0;
+    }
+
+    .map-overlay p.credit {
+       margin: 5px 0 0 0;
+       padding: 0;
+    }
+
+    </style>
+</head>
+    
+<body>
+    <style>
+        .legend {
+        background-color: #fff;
+        border-radius: 3px;
+        bottom: 30px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.10);
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        padding: 10px;
+        position: absolute;
+        right: 10px;
+        z-index: 1;
+            }
+        
+        .legend h2 {
+        margin: 0 0 10px;
+        }
+
+        .legend div span {
+        border-radius: 50%;
+        display: inline-block;
+        height: 10px;
+        margin-right: 5px;
+        width: 10px;
+        }
+        
+
+    </style>
+    
+    <div id = 'map'></div>
+    
+    <div id='cycrate' class='legend'>
+    <h2>cycle rate LSOAs </h2>
+    <div><span style='background-color: #dbf7a6'></span>1.03 %</div>
+    <div><span style='background-color: #ffc300'></span>1.63 %</div>
+    <div><span style='background-color: #ff5833'></span>2.63 %</div>
+    <div><span style='background-color: #c70038'></span>4.63 %</div>
+    <div><span style='background-color: #920c3f'></span>7.4 %</div>
+    <div><span style='background-color: #581845'></span>27.5 %</div>
+    </div>
+    
+    <div id='publicrate' class='legend'>
+    <h2>public rate LSOAs </h2>
+    <div><span style='background-color: #dbf7a6'></span>12%</div>
+    <div><span style='background-color: #ffc300'></span>38%</div>
+    <div><span style='background-color: #ff5833'></span>47%</div>
+    <div><span style='background-color: #c70038'></span>55%</div>
+    <div><span style='background-color: #920c3f'></span>62%</div>
+    <div><span style='background-color: #dbf7a6'></span>other</div>
+    </div>
+
+    <div id='cycleflows' class='legend'>
+    <h2>cycle flows inner London </h2>
+    <div><span style='background-color: #ffffbf'></span>less than 100</div>
+    <div><span style='background-color: #fdae61'></span>100-500</div>
+    <div><span style='background-color: #f46d43'></span>500-1000</div>
+    <div><span style='background-color: #a50026'></span>more than 1000</div>
+    </div>
+    
+    <div id='traffic_count' class='legend'>
+        <h2>Traffic counts by borough</h2>
+		<table><tr><td>
+        <input id='slider' type='range' min='0' max='7' step='1' value='0' list='tickmarks' />
+        <datalist id="tickmarks">
+		                <option value="0" lable="2010"> 
+                        <option value="1">
+                        <option value="2">
+                        <option value="3">
+                        <option value="4" label="2014">
+                        <option value="5">
+                        <option value="6">
+                        <option value="7" label="2017">
+                        </datalist>
+		 </td>
+		 <td><label id='year'>2010</label></td>
+         </tr></table>
+                <p class="credit">traffic counts data: <a href="https://www.gov.uk/government/statistical-data-sets/road-traffic-statistics-tra">Gov of UK</a></p>
+         
+</div>
+
+    
+    <div class='map-overlay top'>
+    <div class='map-overlay-inner'>
+        <h1>Traffic counts and travel to work in London</h1>
+		<table><tr><td>
+        <!--the default button is "traffic counts", that means every time when the user get into this web, the radio bar always choose "Jobs" as defaut set-->
+        <input type="radio" name="layers" id="layer1" value="traffic_count"checked><label>Total trafic flows in London<br></label>
+        <input type="radio" name="layers" id="layer2" value="publicrate"><label>travel by public transport % by LSOAs<br></label>
+  		<input type="radio" name="layers" id="layer3" value="cycrate"><label>travel by bike % by LSOAs <br></label>
+  		<input type="radio" name="layers" id="layer4" value="cycleflows"><label>click to see sample of cycle hiring flows<br></label>
+        </td>
+        </tr>
+        </table>
+        <p class="credit">Data of Cycle to Work <a href="https://data.london.gov.uk/dataset/2011-census-labour-and-qualifications">London Datastore</a><br>Public transport to work data<a href="https://www.nomisweb.co.uk/census/2011/qs701ew">ONS</a><br>Santander Cycle hiring sample data 05Jan14-02Feb14<a href="https://cycling.data.tfl.gov.uk/">TFL</a></p>
+</div>
+</div>
+
+    <script>
+    // below is my mapbox access token 
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWFkYW8yMzMzIiwiYSI6ImNqYzh5aXk0cjA0cDAyd281cm0wc3J0YzAifQ.9dICOu1KU_JZdW8tBxNChg';
+        
+    // Load a new map in the 'map' HTML div, below is my mapbox access token
+    var map = new mapboxgl.Map({
+          container: 'map',
+          style: 'mapbox://styles/madao2333/cjsrq1e872ls41fphas7do6cy',
+          center: [-0.121126,51.494914],
+          zoom: 9.5,
+    });
+            //set the variable of the legend of each layer by ID
+            var trafficLegendEl = document.getElementById('traffic_count');
+            var publicLegendEl = document.getElementById('publicrate');
+            var cycrateLegendEl = document.getElementById('cycrate');
+            var cycleflowsLegendEl = document.getElementById('cycleflows')
+            
+            // block other legents when users get in to this website, only show the traffic count legent at beginning
+            publicLegendEl.style.display = 'none';
+            cycleflowsLegendEl.style.display = 'none';
+            cycrateLegendEl.style.display = 'none';
+    
+    // set a series of variables of years   
+    var years = [
+        '2010',
+        '2011',
+        '2012',
+        '2013',
+        '2014',
+        '2015',
+        '2016',
+        '2017'
+    ];
+
+    map.on('load', function(){
+        // Add standard navigation control to top-right
+        map.addControl(new mapboxgl.NavigationControl());
+             
+            
+            // main function fo users to set the years of traffic counts 
+        function setYear(year) {
+            // Set the label of year with ID with getElementById() method, each time returen one year by looking into the column of the layer
+            document.getElementById('year').textContent = years[year];
+            
+            // indicate which property will be target in this function
+            var pp = map.getPaintProperty('traffic_count','circle-radius');
+
+            console.log(pp);
+                
+            // set target varibles based on keyword "TF" and year, hence we can locate the specific column of each year in each selection
+            pp.property = "TF" + years[year];
+
+            map.setPaintProperty('traffic_count','circle-radius',pp);
+
+            console.log(map.getPaintProperty('traffic_count','circle-radius'));
+
+            map.setLayoutProperty('traffic_count', 'visibility', 'none');
+            map.setLayoutProperty('traffic_count', 'visibility', 'visible');
+
+            var yearcol = "TF" + String(years[year]);
+            var textfield = "{" + yearcol + "}m";
+
+            console.log(textfield);
+
+            map.setLayoutProperty('labels', 'text-field', textfield);
+            }
+
+
+           // Layer 1: Add the layer of total traffic counts (borough based) to the map with setting colors and circle redius. The original dataset is collect from gov of UK by "Road traffic statistics (TRA)". In this practice, I only show the change of traffic number from 2010 to 2017
+        map.addLayer({
+                    id: 'traffic_count',
+                    type: 'circle',
+                    source: {
+                      type: 'vector',
+                      url: 'mapbox://madao2333.63z845ip' // the tileset of data of traffic counts 
+                    },
+                    'source-layer': 'traffic_flows-dzpm2j', // name of tilesets
+                    'layout': {
+                        'visibility': 'visible'
+                    },
+                    paint: {
+                        // set the color style of traffic counts by steps (0-500, 500-800, 800-1200, 1200+ ) 
+                        "circle-color": [
+                            "step",
+                            ["get", "TF2010"],
+                            "#fed976",
+                            500,
+                            "#fd8d3c",
+                            800,
+                            "#fc4e2a",
+                            1200,
+                            "#bd0026"
+                            ],
+                        'circle-opacity': 0.6,
+                        'circle-radius': {
+                            property: 'TF2010',
+                            type: 'exponential',
+                            stops: [
+                                // change the circle size according to zoom level 
+                                [{zoom: 9, value: 0}, 5],
+                                [{zoom: 9, value: 200}, 10],
+                                [{zoom: 9, value: 500}, 15],
+                                [{zoom: 9, value: 700}, 25],
+                                [{zoom: 9, value: 1100}, 45],
+                                [{zoom: 9, value: 1200}, 55],
+                                [{zoom: 9, value: 1700}, 70],
+                                [{zoom: 12, value: 0}, 15],
+                                [{zoom: 12, value: 500}, 30],
+                                [{zoom: 12, value: 800}, 50],
+                                [{zoom: 12, value: 1000}, 70],
+                                [{zoom: 12, value: 1500}, 90],
+                                [{zoom: 16, value: 0}, 20],
+                                [{zoom: 16, value: 500}, 40],
+                                [{zoom: 16, value: 800}, 60],
+                                [{zoom: 16, value: 1000}, 80],
+                                [{zoom: 16, value: 1500}, 100],
+                                [{zoom: 16, value: 1700}, 120],
+                                ]
+                        }}
+                  });
+        // Add the label layer of traffic counts    
+        map.addLayer({
+                'id': 'labels',
+                'type': 'symbol',
+                'source': 'traffic_count',
+                'source-layer': 'traffic_flows-dzpm2j', // name of tilesets
+                'layout': {
+                    'text-field': '{TF2010}m',
+                    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                    'text-size': {
+                         stops: [[8, 9], [12.5, 10], [12.6, 12]]
+                     }
+                },
+                'paint': {
+                    'text-color': 'rgba(0,0,0,0.6)'
+                }
+                });     
+        //initial year 2010 with value = 0
+        var prevyear = 0;
+
+        // Assign an event listner to the slider to run setYear function
+        document.getElementById('slider').addEventListener('input', function(e) {
+                var year = parseInt(e.target.value);
+                setYear(year);
+                });
+
+
+            var mypopup = new mapboxgl.Popup({offset:[150,50],closeButton: false});
+
+            // Assign the event listener of popup
+            //the popup of value columns will turn up when users move their mouse to the target area
+            map.on('mouseover', 'traffic_count', function (e) {
+                    mypopup
+                        .setLngLat(e.features[0].geometry.coordinates)
+                        .setHTML("<h3>" + e.features[0].properties.NAME + "</h3>2010: " + e.features[0].properties.TF2010 + "m<br />2011: " + e.features[0].properties.TF2011 + "m<br />2012: " + e.features[0].properties.TF2012 + "m<br />2013: " + e.features[0].properties.TF2013 + "m<br />2014: " + e.features[0].properties.TF2014 + "m<br />2015: " + e.features[0].properties.TF2015 + "m<br />2016: " + e.features[0].properties.TF2016 + "m<br />2017: " + e.features[0].properties.TF2017 + "m")
+                        .addTo(map);
+                });
+
+            // When the mouse is over the traffic_count layer, show the popup.
+            map.on('mouseenter', 'traffic_count', function () {
+                  map.getCanvas().style.cursor = 'pointer';
+            });
+
+            // When mouse leave the traffic_count layer, remove the popup window.
+            map.on('mouseleave', 'traffic_count', function () {
+                map.getCanvas().style.cursor = '';
+                mypopup.remove();
+            });
+          
+        //Layer 2: This layer shows that commuter travel to work by public transport, including tube, coach, trains, and bus. The fill-color is set into 5 levels by quantil(Equal count). 
+            map.addLayer({
+                
+                id: 'publicrate',
+                type: 'fill',
+                source: {
+                    type: 'vector',
+                    url:'mapbox://madao2333.61t0r3d0'
+                },
+                'source-layer': 'travel_public-af50bm',
+                'layout':{
+                'visibility': 'visible'
+            },
+               
+                // quantil(Equal count)
+                paint: {
+                    'fill-color':{
+                    property: 'P_rate', //attribute that is being visualised  
+                    stops: [
+                        [0.12, '#dbf7a6'],
+                        [0.38, '#dbf7a6'], 
+                        [0.47, '#ffc300'], 
+                        [0.54, '#ff5833'], 
+                        [0.63, '#c70038']]
+                        
+                    }, 'fill-opacity': 0, 
+        }
+    });
+            
+            // Layer 3: Below shows the map of rate of ride bike to work
+            map.addLayer({
+            id: 'cycrate',
+            type:'fill',
+            source:{
+             type:'vector',
+             url:'mapbox://madao2333.83tgj5f5'
+        },
+                'source-layer':'cyc-76dmqz',
+            
+            paint:{
+                'fill-color':{
+                    property: 'cyc', //attribute that is being visualised
+                    type: 'exponential', 
+                    stops: [
+                        [0, '#dbf7a6'],
+                        [1.03, '#dbf7a6'], 
+                        [2.63, '#ffc300'], 
+                        [4.63, '#ff5833'], 
+                        [7.4, '#c70038'],
+                        [22.9, '#920c3f'],
+                        [27.5, '#581845'] ]
+                    
+
+                }, 
+            'fill-opacity': 0,
+        }
+      
+        });
+      
+
+            //Layer 4: This layer shows the cycle sharing flows of endpoints of Santander. the original dataset is generated from TFL API, and then I use python to process the data. After filtering and summarising the original data, the clean data of column is passed to QGIS to assign the geographic points. Finally merged into a zip file to Mapbox tileset.
+            map.addLayer({
+            id:'cycleflows',
+            type:'circle',
+            source:{
+                type:'vector',
+                url:'mapbox://madao2333.7mcrxf38'//my url of the tilesets
+
+            },
+            'source-layer':'cyc_number_end-5d6bzk', //name of the tilesets
+
+            paint:{
+                "circle-color": [
+                "step",
+                ["get", "cycflow"],
+                "#ffffbf",
+                100,
+                "#fdae61",
+                500,
+                "#f46d43",
+                1000,
+                "#a50026"
+                ],
+                'circle-opacity': 0, 
+                'circle-radius':{
+                    property:'cycflow', //attribute that is being visualised
+                    type: 'exponential',
+                    stops:[
+                        [{zoom: 10, value:0},0],
+                        [{zoom: 10, value: 1262}, 0], 
+                        [{zoom: 11, value: 0}, 3], 
+                        [{zoom: 11, value: 500}, 10],
+                        [{zoom: 11, value: 1262}, 20], 
+                        [{zoom: 12, value: 0}, 5], 
+                        [{zoom: 12, value: 1262}, 40], 
+                        [{zoom: 16, value: 0}, 10], 
+                        [{zoom: 16, value: 1262}, 50],
+                    ]
+                }}
+        });
+            
+
+            
+        //Event listener to switch the layer based on users control.
+        // The opacity of other layer should be set in "0" in order to show the chosen. 
+        //Layer 1: This one is to show the traffic counts with its label on right bottom
+        document.getElementById("layer1").addEventListener("click",function(){
+            map.setLayoutProperty('traffic_count', 'visibility', 'visible');
+            map.setPaintProperty('publicrate','fill-opacity',0);
+            map.setPaintProperty('cycrate','fill-opacity',0);
+            map.setPaintProperty('cycleflows','circle-opacity',0);
+            map.setLayoutProperty('labels', 'visibility', 'visible');
+            cycleflowsLegendEl.style.display = 'none';
+            cycrateLegendEl.style.display = 'none';
+            trafficLegendEl.style.display = 'block';
+            publicLegendEl.style.display = 'none';
+            map.flyTo({
+                        center: [-0.121126,51.494914],
+                        zoom: 9.5, speed: 0.6
+                    });
+        });
+            
+            // Layer 2: This is calling to show the rate of public transport to work 
+        document.getElementById("layer2").addEventListener("click",function(){
+            map.setLayoutProperty('traffic_count', 'visibility', 'none');
+            map.setPaintProperty('publicrate','fill-opacity',0.75);
+            map.setPaintProperty('cycrate','fill-opacity',0);
+            map.setPaintProperty('cycleflows','circle-opacity',0);
+            map.setLayoutProperty('labels', 'visibility', 'none');
+            cycleflowsLegendEl.style.display = 'none';
+            cycrateLegendEl.style.display = 'none';
+            trafficLegendEl.style.display = 'none';
+            publicLegendEl.style.display = 'block';
+            map.flyTo({
+                        center: [-0.121126,51.494914],
+                        zoom: 9.5, speed: 0.6
+                    });
+        });
+            
+            //Layer 3: This is calling to show the cycle rate 
+        document.getElementById("layer3").addEventListener("click",function(){
+            map.setPaintProperty('cycrate','fill-opacity',0.75);
+            map.setPaintProperty('publicrate','fill-opacity',0);
+            map.setPaintProperty('cycleflows','circle-opacity',0);
+            map.setLayoutProperty('traffic_count', 'visibility', 'none');
+            map.setLayoutProperty('labels', 'visibility', 'none');
+            cycleflowsLegendEl.style.display = 'none';
+            cycrateLegendEl.style.display = 'block';
+            trafficLegendEl.style.display = 'none';
+            publicLegendEl.style.display = 'none';
+            map.flyTo({
+                        center: [-0.121126,51.494914],
+                        zoom: 9.5, speed: 0.6
+                    });
+        });
+        
+            // Layer 4: This is calling to show the cycle sharing flows of endpoints of Santander.
+        document.getElementById("layer4").addEventListener("click",function(){
+            map.setPaintProperty('cycrate','fill-opacity',0);
+            map.setPaintProperty('publicrate','fill-opacity',0);
+            map.setPaintProperty('cycleflows','circle-opacity',0.65);
+            map.setLayoutProperty('traffic_count', 'visibility', 'none');
+            map.setLayoutProperty('labels', 'visibility', 'none');
+            cycleflowsLegendEl.style.display = 'block';
+            cycrateLegendEl.style.display = 'none';
+            trafficLegendEl.style.display = 'none';
+            publicLegendEl.style.display = 'none';
+            
+            // This is a fly to function. When users click the button, the map will automatically zoom to the data range of cycle flows in city central areas
+            map.flyTo({
+                        center: [-0.130772, 51.509495],
+                        zoom: 11.5, speed: 0.6
+                    });
+        });      
+});
+    
+    </script>
+    </body>
+</html>
+
