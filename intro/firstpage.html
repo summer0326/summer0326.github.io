@@ -6,16 +6,36 @@
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
-  <style>
+<!--   <style>
     body { margin:0; padding:0; }
-    #map { position:relative; top:0; bottom:0; width:"100%"; }
+    #map { position:relative; top:0; bottom:0; width:"100%"; } -->
+    <style type="text/css">
+  .int1 {
+    background: url(../CASA.jpg) no-repeat fixed 50% 50%;
+    background-size: cover;
+    text-align: center;
+    height: 100vh;
+    font-size: 0;
+    letter-spacing: -4px;
+    color: #fff; }
+    .eol1{
+      text-align: center;
+      position: relative;
+      margin-top:40px;
+      font-family: "Lobster";
+      font-size: 40px;
+      font-weight: normal;
+      letter-spacing: 2px;
+      animation: fadeIn 2s;
+      font: bold 40px/1 "Lobster", Helvetica, Arial, sans-serif;
+      color: #fff;
+      text-shadow: 0 1px 0 #cccccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbbbbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaaaaa, 0 6px 1px rgba(0, 0, 0, 0.1), 0 0 5px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3), 0 3px 5px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.2), 0 20px 20px rgba(0, 0, 0, 0.15);
+      -webkit-transition: 4s all linear;
+    }
   </style>
 </head>
-<body>
+<body class="int1">
 
-<div id='map'></div>
-
-    <p><img src="../CASA.jpg" alt="1" align = middle width="100%"/> </p>
 
 
 
